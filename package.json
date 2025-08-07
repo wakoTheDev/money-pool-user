@@ -1,0 +1,75 @@
+{
+  "name": "moneypool",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Complete digital platform for Kenyan savings groups (Chama) management",
+  "keywords": [
+    "chama",
+    "savings group",
+    "financial management",
+    "Kenya",
+    "microfinance"
+  ],
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "analyze": "cross-env ANALYZE=true next build",
+    "perf": "next build && next start",
+    "optimize": "next build --debug",
+    "clean": "rimraf .next out dist",
+    "test": "echo \"Add your test command here\"",
+    "test:a11y": "echo \"Add accessibility tests here\"",
+    "preview": "next build && next start"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.0.0",
+    "@fortawesome/free-solid-svg-icons": "^7.0.0",
+    "@fortawesome/react-fontawesome": "^0.2.3",
+    "@headlessui/react": "^2.2.7",
+    "@heroicons/react": "^2.2.0",
+    "@tailwindcss/forms": "^0.5.10",
+    "axios": "^1.11.0",
+    "clsx": "^2.1.1",
+    "critters": "^0.0.25",
+    "next": "15.4.5",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "^7.62.0",
+    "react-icons": "^5.5.0",
+    "recharts": "^3.1.2",
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "cross-env": "^7.0.3",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.5",
+    "rimraf": "^5.0.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/moneypool.git"
+  },
+  "author": "MoneyPool Team",
+  "license": "MIT",
+  "homepage": "https://moneypool.app"
+}
