@@ -1,6 +1,11 @@
 "use client";
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ReactNode } from 'react';
+
+// Define ErrorInfo interface since it's not exported in React 19
+interface ErrorInfo {
+  componentStack: string;
+}
 
 interface Props {
   children: ReactNode;
@@ -183,9 +188,7 @@ export const withErrorBoundary = <P extends object>(
   customFallback?: (error: Error, errorInfo: ErrorInfo) => ReactNode
 ) => {
   const WrappedComponent = (props: P) => (
-    <ErrorBoundary fallback={customFallback}>
-      <Component {...props} />
-    </ErrorBoundary>
+    <ErrorBoundary children={<Component {...props} />} fallback={customFallback} />
   );
 
   WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
