@@ -1,8 +1,3 @@
-/**
- * Enhanced Dashboard Integration
- * Main dashboard that integrates all enhanced modules
- */
-
 "use client";
 
 import React, { useState, Suspense } from 'react';
@@ -223,7 +218,7 @@ const EnhancedDashboard: React.FC<EnhancedDashboardProps> = ({
       <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white shadow-lg transition-all duration-300 ease-in-out`}>
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          {sidebarOpen && <h1 className="text-xl font-bold text-gray-900">Chama Manager</h1>}
+          {sidebarOpen && <h1 className="text-xl font-bold text-gray-900">Money Pool</h1>}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 rounded-md hover:bg-gray-100"

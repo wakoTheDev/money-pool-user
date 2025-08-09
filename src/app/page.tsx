@@ -1,20 +1,9 @@
 "use client";
 
-import React, { Suspense, useCallback, useMemo } from "react";
+import React, { Suspense, useMemo } from "react";
 import dynamic from "next/dynamic";
-
-// Import the enhanced demo component
-const EnhancedModuleDemo = dynamic(() => import("@/components/EnhancedModuleDemo"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex items-center justify-center min-h-screen bg-white">
-      <div className="text-center">
-        <div className="loading-spinner mx-auto mb-4"></div>
-        <p className="text-gray-600 font-medium">Loading Enhanced Demo...</p>
-      </div>
-    </div>
-  )
-});
+import { AuthProvider, useAuth } from "@/hooks/useAuth";
+import AuthRouter from "@/components/auth/AuthRouter";
 
 const Dashboard = dynamic(() => import("@/components/Dashboard"), {
   ssr: false,
@@ -29,11 +18,10 @@ const Dashboard = dynamic(() => import("@/components/Dashboard"), {
   )
 });
 
-// Main Home component with demo toggle
-export default function Home() {
-  // Enhanced Platform Demo Toggle State
-  const [showDemo, setShowDemo] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
+// Main platform component (requires authentication)
+const MoneyPoolPlatform: React.FC = () => {
+  const { user, isAuthenticated, logout, hasPermission } = useAuth();
+  const [showAdminDashboard, setShowAdminDashboard] = React.useState(false);
 
   // Configuration for enhanced platform
   const enhancedConfig = useMemo(() => ({
@@ -52,105 +40,92 @@ export default function Home() {
     }
   }), []);
 
-  const handleToggleView = useCallback((viewType: 'demo' | 'platform') => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setShowDemo(viewType === 'demo');
-      setIsLoading(false);
-    }, 300);
-  }, []);
+  const handleLogout = () => {
+    logout();
+  };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="text-center">
-          <div className="loading-spinner mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Switching views...</p>
-        </div>
-      </div>
-    );
+  const handleShowAdminDashboard = () => {
+    setShowAdminDashboard(true);
+  };
+
+  const handleCloseAdminDashboard = () => {
+    setShowAdminDashboard(false);
+  };
+
+  // Show authentication if not logged in
+  if (!isAuthenticated || !user) {
+    return <AuthRouter onAuthSuccess={() => {}} />;
   }
 
-  if (showDemo) {
-    return (
-      <div className="min-h-screen bg-white">
-        {/* Demo Navigation Header */}
-        <div className="border-b border-gray-200 bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">MoneyPool Enhanced Demo</h1>
-                <span className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                  Demo Mode
-                </span>
-              </div>
-              <button
-                onClick={() => handleToggleView('platform')}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <i className="fas fa-arrow-left mr-2"></i>
-                Exit Demo
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Demo Content */}
-        <Suspense fallback={
-          <div className="flex items-center justify-center h-96">
-            <div className="text-center">
-              <div className="loading-spinner mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading enhanced demo...</p>
-            </div>
-          </div>
-        }>
-          <EnhancedModuleDemo />
-        </Suspense>
-      </div>
-    );
+  // Show admin dashboard if requested and user has permission
+  if (showAdminDashboard && hasPermission('admin_access')) {
+    const AdminDashboard = dynamic(() => import("@/components/admin/AdminDashboard"), { ssr: false });
+    return <AdminDashboard onClose={handleCloseAdminDashboard} />;
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Platform Selection Header */}
+      {/* Platform Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-gray-900">MoneyPool Platform</h1>
               <span className="ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                Enhanced Mode
+                Production
               </span>
             </div>
             <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">
+                Welcome, {user.firstName}! ({user.role})
+              </span>
+              
+              {hasPermission('admin_access') && (
+                <button
+                  onClick={handleShowAdminDashboard}
+                  className="inline-flex items-center px-4 py-2 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  <i className="fas fa-cog mr-2"></i>
+                  Admin Dashboard
+                </button>
+              )}
+              
               <button
-                onClick={() => handleToggleView('demo')}
-                className="inline-flex items-center px-4 py-2 border border-blue-300 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={handleLogout}
+                className="inline-flex items-center px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
-                <i className="fas fa-play mr-2"></i>
-                View Demo
+                Logout
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Platform Content */}
+      {/* Platform Content */}
       <Suspense fallback={
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <div className="loading-spinner mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading enhanced platform...</p>
+            <p className="text-gray-600">Loading platform...</p>
           </div>
         </div>
       }>
         <Dashboard 
           enhanced={true}
-          userId="user1"
+          userId={user.id}
           userPermissions={enhancedConfig.permissions}
-          chamaId="chama1"
+          chamaId={user.chamaId || "default-chama"}
         />
       </Suspense>
     </div>
+  );
+};
+
+// Main Home component with authentication provider
+export default function Home() {
+  return (
+    <AuthProvider children={""}>
+      <MoneyPoolPlatform />
+    </AuthProvider>
   );
 }

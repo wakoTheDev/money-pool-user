@@ -11,10 +11,6 @@ interface DashboardProps {
   chamaId?: string;
 }
 
-/**
- * Simplified Dashboard component - always uses enhanced mode
- * Legacy components have been removed as the platform now exclusively uses enhanced modules
- */
 const Dashboard = React.memo(({ 
   enhanced = true, 
   userId = 'user1', 

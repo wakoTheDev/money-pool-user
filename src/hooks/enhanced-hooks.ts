@@ -58,7 +58,7 @@ export function useApiData<T>(
         setData(response.data);
         setLastFetch(Date.now());
       } else {
-        setError(response.error?.message || 'Failed to fetch data');
+        setError(response.error || 'Failed to fetch data');
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
@@ -354,7 +354,7 @@ export function useRealTimeData<T>(
         setData(response.data);
         setError(null);
       } else {
-        setError(response.error?.message || 'Failed to fetch data');
+        setError(response.error || 'Failed to fetch data');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
